@@ -2,8 +2,29 @@
  * Stub
  * 
  * @author Chris
+ * @author Carol
  *
  */
 public class BagScanner {
+	public void onRecieve(Object message){
+		
+	}
+	
+	public boolean checkBag(Person person) throws InterruptedException{
+		int check = (int) (Math.random() * 100);
+		wait(person.getNumberOfBags()*1000);
 
+		if(check <= 20){
+			return false;
+
+		}else{
+			return true;
+		}
+		
+	}
+	
+	public void sendBagToSecurity(Person person) throws InterruptedException{
+		boolean passFail = checkBag(person);
+	}
+	
 }
