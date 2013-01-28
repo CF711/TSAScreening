@@ -6,6 +6,7 @@
  *
  */
 public class BagScanner {
+
 	public void onRecieve(Object message){
 		
 	}
@@ -26,5 +27,4 @@ public class BagScanner {
 	public void sendBagToSecurity(Person person) throws InterruptedException{
 		boolean passFail = checkBag(person);
 	}
-	
 }
