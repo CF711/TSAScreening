@@ -6,8 +6,12 @@
  *
  */
 public class BodyScanner {
+	
 	public void onRecieve(Object message){
-		
+		if (message instanceof Person){
+			try {sendPersonToSecurity((Person) message);} 
+			catch (InterruptedException e) {}
+		}
 	}
 	
 	public boolean checkPerson(Person person) throws InterruptedException{

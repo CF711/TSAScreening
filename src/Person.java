@@ -1,6 +1,3 @@
-import java.util.regex.Pattern;
-
-
 /**
  * Stub
  * 
@@ -12,6 +9,7 @@ public class Person {
 	private final int personId;
 	private final int queueId;
 	private final int numberOfBags;
+	private boolean sendToJail = false;
   
     public Person(int personId, int queueId, int numberOfBags) {
             this.personId = personId;
@@ -29,5 +27,13 @@ public class Person {
 
     public int getNumberOfBags() {
             return numberOfBags;
+    }
+    
+    public boolean getSendToJail(){
+    	return sendToJail;
+    }
+    
+    public void setSendToJail(boolean sendToJail) {
+    	this.sendToJail = sendToJail;
     }
 }

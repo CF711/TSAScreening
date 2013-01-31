@@ -10,9 +10,14 @@ import java.util.List;
  */
 public class Security {
     List<Person> jail = new ArrayList<Person>();
+    List<Person> awaiting = new ArrayList<Person>();
 	
 	public void onRecieve(Object message){
-		
+		if (message instanceof Person){
+			if (awaiting.contains(((Person) message).getPersonId())){
+				
+			}	
+		}
 	}
 	
 	public void sendToJail(Person person){

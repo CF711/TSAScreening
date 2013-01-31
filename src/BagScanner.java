@@ -8,7 +8,10 @@
 public class BagScanner {
 
 	public void onRecieve(Object message){
-		
+		if (message instanceof Person){
+			try {sendBagToSecurity((Person) message);} 
+			catch (InterruptedException e) {}
+		}
 	}
 	
 	public boolean checkBag(Person person) throws InterruptedException{
