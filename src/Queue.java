@@ -19,15 +19,20 @@ public class Queue extends UntypedActor {
 
 	ActorRef queueBag = actorOf(BagScanner.class).start();
 	ActorRef queueBody = actorOf(BodyScanner.class).start();
+	ActorRef security = actorOf(Security.class).start();
 
 	public void onReceive(Object message) {
 		if (message instanceof Person) {
 			if (!queue.contains((Person) message)) {
 				if (scannerClear && queue.isEmpty()) {
 					queue.add((Person) message);
+					
+					// Does this need to be executed as atomic operation?
 					sendToBagScan();
 					sendToBodyScan();
-				} else {
+					
+				} 
+				else {
 					queue.add((Person) message);
 				}
 			}
@@ -38,13 +43,13 @@ public class Queue extends UntypedActor {
 	 * Sends a person object to the bag scanner
 	 */
 	public void sendToBagScan(){
-		queueBag.tell(queue.getFirst());
+		queueBag.tell(queue.getFirst(), security);
 	}
 	
 	/**
 	 * Sends a person object to the body scanner
 	 */
 	public void sendToBodyScan() {
-		queueBody.tell(queue.pop());
+		queueBody.tell(queue.pop(), security);
 	}
 }

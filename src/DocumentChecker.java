@@ -25,13 +25,22 @@ public class DocumentChecker extends UntypedActor {
 			rejectPerson(person);
 		}
 		else {
+			/*
+			 * Upon building the queues, we need to construct a
+			 * configure object which possesses all the parameters
+			 * needed to build queues, bag and body scans, and
+			 * security.
+			 * 
+			 * Thus, each actor will need to compare (instanceof)
+			 * on the incoming message to determine if it
+			 * is a configure object and process accordingly
+			 * 
+			 */
 			for(int i = 0; i < 4; i++) {
 				queue = actorOf(Queue.class).start();
-				security = actorOf(Security.class).start();
 				queue.tell(person, security);
 			}
-		}
-		
+		}		
 	}
 	
 	public void rejectPerson(Person person){
