@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import akka.actor.UntypedActor;
+
 /**
  * Stub
  * 
@@ -8,11 +10,11 @@ import java.util.List;
  * @author Carol
  *
  */
-public class Security {
+public class Security extends UntypedActor {
     List<Person> jail = new ArrayList<Person>();
     List<Person> awaiting = new ArrayList<Person>();
 	
-	public void onRecieve(Object message){
+	public void onReceive(Object message){
 		if (message instanceof Person){
 			if (awaiting.contains(((Person) message).getPersonId())){
 				

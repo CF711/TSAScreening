@@ -1,3 +1,5 @@
+import akka.actor.UntypedActor;
+
 /**
  * Stub
  * 
@@ -5,9 +7,9 @@
  * @author Carol
  *
  */
-public class BagScanner {
+public class BagScanner extends UntypedActor {
 
-	public void onRecieve(Object message){
+	public void onReceive(Object message){
 		if (message instanceof Person){
 			try {sendBagToSecurity((Person) message);} 
 			catch (InterruptedException e) {}
