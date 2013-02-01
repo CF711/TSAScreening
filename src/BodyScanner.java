@@ -1,3 +1,5 @@
+import akka.actor.UntypedActor;
+
 /**
  * Stub
  * 
@@ -5,9 +7,9 @@
  * @author Carol
  *
  */
-public class BodyScanner {
+public class BodyScanner extends UntypedActor {
 	
-	public void onRecieve(Object message){
+	public void onReceive(Object message){
 		if (message instanceof Person){
 			try {sendPersonToSecurity((Person) message);} 
 			catch (InterruptedException e) {}
