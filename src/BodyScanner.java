@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import static akka.actor.Actors.actorOf;
@@ -10,16 +13,23 @@ import static akka.actor.Actors.actorOf;
  *
  */
 public class BodyScanner extends UntypedActor {
-	
-	ActorRef security;
+
 	Person person;
+	boolean personCheck;
+	ArrayList<Object> bodyList = new ArrayList<Object>();
 	
-	public void onReceive(Object message1, Object message2) throws Exception {
-		if (message1 instanceof Person){
-			person = (Person)message1;
+	public void onReceive(Object message) throws Exception {
+		
+		if (message instanceof Configure){
+			// Andy do your schwag here!
 		}
-		if (message2 instanceof ActorRef){
-			security = (ActorRef)message2;
+		
+		if (message instanceof Person){
+			person = (Person)message;
+			personCheck = checkPerson(person);
+			bodyList.add(person);
+			bodyList.add(personCheck);
+			sendPersonToSecurity(bodyList);
 		}
 	}
 	
@@ -35,8 +45,8 @@ public class BodyScanner extends UntypedActor {
 		
 	}
 	
-	public void sendPersonToSecurity(Person person, ActorRef security) throws InterruptedException{
-		security.tell(person, checkPerson(person));
+	public void sendPersonToSecurity(ArrayList bodyList) throws InterruptedException{
+		security.tell(bodyList);
 	}
 	
 }
