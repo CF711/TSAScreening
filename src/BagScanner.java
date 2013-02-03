@@ -1,3 +1,7 @@
+import akka.actor.ActorRef;
+import akka.actor.UntypedActor;
+import static akka.actor.Actors.actorOf;
+
 /**
  * Stub
  * 
@@ -5,13 +9,21 @@
  * @author Carol
  *
  */
-public class BagScanner {
+public class BagScanner extends UntypedActor {
+	
+	ActorRef security;
+	Person person;
 
-	public void onRecieve(Object message){
-		if (message instanceof Person){
-			try {sendBagToSecurity((Person) message);} 
-			catch (InterruptedException e) {}
+	public void onReceive(Object message1, Object message2){
+		if (message1 instanceof Person){
+			person = (Person)message1;
 		}
+		if (message2 instanceof ActorRef){
+			security = (ActorRef)message2;
+		}
+		
+		try {sendBagToSecurity(person, security);} 
+		catch (InterruptedException e) {}
 	}
 	
 	public boolean checkBag(Person person) throws InterruptedException{
@@ -27,7 +39,8 @@ public class BagScanner {
 		
 	}
 	
-	public void sendBagToSecurity(Person person) throws InterruptedException{
-		boolean passFail = checkBag(person);
+	public void sendBagToSecurity(Person person, ActorRef security) throws InterruptedException{
+		security.tell(person, checkBag(person));
 	}
+
 }

@@ -1,3 +1,7 @@
+import akka.actor.ActorRef;
+import akka.actor.UntypedActor;
+import static akka.actor.Actors.actorOf;
+
 /**
  * Stub
  * 
@@ -5,12 +9,17 @@
  * @author Carol
  *
  */
-public class BodyScanner {
+public class BodyScanner extends UntypedActor {
 	
-	public void onRecieve(Object message){
-		if (message instanceof Person){
-			try {sendPersonToSecurity((Person) message);} 
-			catch (InterruptedException e) {}
+	ActorRef security;
+	Person person;
+	
+	public void onReceive(Object message1, Object message2) throws Exception {
+		if (message1 instanceof Person){
+			person = (Person)message1;
+		}
+		if (message2 instanceof ActorRef){
+			security = (ActorRef)message2;
 		}
 	}
 	
@@ -26,8 +35,8 @@ public class BodyScanner {
 		
 	}
 	
-	public void sendPersonToSecurity(Person person) throws InterruptedException{
-		boolean passFail = checkPerson(person);
+	public void sendPersonToSecurity(Person person, ActorRef security) throws InterruptedException{
+		security.tell(person, checkPerson(person));
 	}
 	
 }
