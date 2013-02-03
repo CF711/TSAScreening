@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import static akka.actor.Actors.actorOf;
@@ -11,19 +14,24 @@ import static akka.actor.Actors.actorOf;
  */
 public class BagScanner extends UntypedActor {
 	
-	ActorRef security;
+	//ActorRef security;
 	Person person;
+	boolean bagCheck = false;
+	ArrayList<Object> bagList = new ArrayList<Object>();
 
-	public void onReceive(Object message1, Object message2){
-		if (message1 instanceof Person){
-			person = (Person)message1;
+
+	public void onReceive(Object message){
+		if (message instanceof Configure){
+//add Andy's stuff
 		}
-		if (message2 instanceof ActorRef){
-			security = (ActorRef)message2;
+		if (message instanceof Person){
+			person = (Person)message;
+			bagCheck = checkBag(person);
+			bagList.add((Person)person);
+			bagList.add((Boolean)checkBag(person));
+			sendBagToSecurity(bagList);
 		}
 		
-		try {sendBagToSecurity(person, security);} 
-		catch (InterruptedException e) {}
 	}
 	
 	public boolean checkBag(Person person) throws InterruptedException{
@@ -39,8 +47,9 @@ public class BagScanner extends UntypedActor {
 		
 	}
 	
-	public void sendBagToSecurity(Person person, ActorRef security) throws InterruptedException{
-		security.tell(person, checkBag(person));
+	public void sendBagToSecurity(ArrayList bagArray) throws InterruptedException{
+		security.tell(bagList);
+		//get from configure
 	}
 
 }
