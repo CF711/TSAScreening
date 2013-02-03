@@ -8,13 +8,28 @@ import static akka.actor.Actors.actorOf;
  * 
  * @author Chris
  * @author Carol
+ * @MasterOfConcurrency Andrew Lyne
  *
  */
 public class DocumentChecker extends UntypedActor {
 	
+	private final ActorRef stations[];
 	
-	public void onReceive(Object arg0) throws Exception {
-
+	public DocumentChecker(int numStations){
+		stations = new ActorRef[numStations];
+		for(int i=0; i<numStations; i++){
+			stations[i] = actorOf(Queue.class).start();; 
+		}
+	}
+	
+	public void onReceive(Object message) throws Exception {
+		
+		if(message instanceof Configure){
+			for(int i=0; i < stations.length; i++){
+			stations[i].tell(message);	
+			}
+		}
+		
 		
 	}
 

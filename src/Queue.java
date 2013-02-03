@@ -4,12 +4,14 @@ import java.util.List;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import static akka.actor.Actors.actorOf;
+import akka.actor.UntypedActor;
 
 /**
  * Stub
  * 
  * @author Chris
  * @author Carol
+ * @CodeGuru Andrew Lyne
  * 
  */
 public class Queue extends UntypedActor {
