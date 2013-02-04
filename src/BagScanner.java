@@ -10,26 +10,34 @@ import static akka.actor.Actors.actorOf;
  * 
  * @author Chris
  * @author Carol
- *
+ * @author Stephan
  */
 public class BagScanner extends UntypedActor {
 	
-	//ActorRef security;
+	ActorRef security;
 	Person person;
 	boolean bagCheck = false;
 	ArrayList<Object> bagList = new ArrayList<Object>();
 
+	public BagScanner(ActorRef securityGuard){
+		security = securityGuard;
+	}
 
 	public void onReceive(Object message){
-		if (message instanceof Configure){
-//add Andy's stuff
-		}
+
 		if (message instanceof Person){
-			person = (Person)message;
-			bagCheck = checkBag(person);
-			bagList.add((Person)person);
-			bagList.add((Boolean)checkBag(person));
-			sendBagToSecurity(bagList);
+			
+			try {
+				person = (Person)message;
+				bagCheck = checkBag(person);
+				bagList.add((Person)person);
+				bagList.add((Boolean)checkBag(person));
+				sendBagToSecurity(bagList);
+			} 
+			
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}

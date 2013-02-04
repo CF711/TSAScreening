@@ -33,9 +33,6 @@ public class Security extends UntypedActor {
      * from BodyScanner) and the Person's bags (sent from BagScanner)
      */
 	public void onReceive(Object message) throws Exception{
-		if (message instanceof Configure) {
-		//Andy
-		}
 		
 		if (message instanceof ArrayList) {
 			checkList = (ArrayList)message;
@@ -57,8 +54,7 @@ public class Security extends UntypedActor {
 			}
 			else{
 				sendToJail(person);
-			}
-			
+			}		
 		
 	}
 	

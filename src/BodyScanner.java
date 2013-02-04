@@ -10,26 +10,34 @@ import static akka.actor.Actors.actorOf;
  * 
  * @author Chris
  * @author Carol
- *
+ * @author Stephan
  */
 public class BodyScanner extends UntypedActor {
 
+	ActorRef security;
 	Person person;
 	boolean personCheck;
 	ArrayList<Object> bodyList = new ArrayList<Object>();
 	
+	public BodyScanner(ActorRef securityGuard) {
+		security = securityGuard;
+	}
+	
 	public void onReceive(Object message) throws Exception {
 		
-		if (message instanceof Configure){
-			// Andy do your schwag here!
-		}
-		
-		if (message instanceof Person){
-			person = (Person)message;
-			personCheck = checkPerson(person);
-			bodyList.add(person);
-			bodyList.add(personCheck);
-			sendPersonToSecurity(bodyList);
+		if (message instanceof Person){			
+
+			try {
+				person = (Person)message;
+				personCheck = checkPerson(person);
+				bodyList.add(person);
+				bodyList.add(personCheck);
+				sendPersonToSecurity(bodyList);
+			}
+			
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
