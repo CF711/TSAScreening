@@ -7,11 +7,11 @@ import akka.actor.ActorRef;
 	*  @ChillBroChill Andrew Lyne	
 	*/
 
-public class QueueConfigure{
+public class ScanConfigure{
 	
 	private final ActorRef guard;
 
-	public QueueConfigure( ActorRef act){
+	public ScanConfigure( ActorRef act){
 		guard = act;
 	}
 	

@@ -1,39 +1,32 @@
 /**
- * Stub
+ * Container class for person information. Used to pass data between actors.
  * 
  * @author Chris
  * @author Carol
+ * @IRONMAN Andrew Lyne III
  *
  */
 public class Person {
 	private final int personId;
-	private final int queueId;
-	private final int numberOfBags;
-	private boolean sendToJail = false;
+	private final Baggage bags;
   
-    public Person(int personId, int queueId, int numberOfBags) {
+    public Person(int personId, int numberOfBags) {
             this.personId = personId;
-            this.queueId = queueId;
-            this.numberOfBags = numberOfBags;
+            bags = new Baggage(numberOfBags, this);
     }
     
     public int getPersonId() {
             return personId;
     }
     
-    public int getQueueId(){
-    		return queueId;
-    }
-
-    public int getNumberOfBags() {
-            return numberOfBags;
+    public Baggage getBaggage() {
+            return bags;
     }
     
-    public boolean getSendToJail(){
-    	return sendToJail;
-    }
-    
-    public void setSendToJail(boolean sendToJail) {
-    	this.sendToJail = sendToJail;
+    public boolean equals( Object other){
+    	if( other instanceof Person){
+    		return personId == ((Person)other).getPersonId();
+    	}
+    	return false;
     }
 }

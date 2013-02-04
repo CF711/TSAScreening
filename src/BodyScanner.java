@@ -1,52 +1,44 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Random;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
-import static akka.actor.Actors.actorOf;
 
 /**
  * Stub
  * 
  * @author Chris
  * @author Carol
+ * @version The Andy Lyne Version
  *
  */
 public class BodyScanner extends UntypedActor {
-
-	Person person;
-	boolean personCheck;
-	ArrayList<Object> bodyList = new ArrayList<Object>();
+	
+	private int CHECK_TIME = 2000;
+	private ActorRef security;
+	private Random r = new Random();
 	
 	public void onReceive(Object message) throws Exception {
-		
-		if (message instanceof Configure){
-			// Andy do your schwag here!
-		}
-		
 		if (message instanceof Person){
-			person = (Person)message;
-			personCheck = checkPerson(person);
-			bodyList.add(person);
-			bodyList.add(personCheck);
-			sendPersonToSecurity(bodyList);
+			BodyScanResults results;
+			boolean didPass = false;
+			try{
+				didPass = checkPerson();
+			}catch( InterruptedException e){
+				System.err.println("Body Inspection Interrupted: Automatic Fail");
+				didPass = false;
+			}finally{
+				results = new BodyScanResults((Person)message, didPass);
+				security.tell(results);
+			}
+		}
+		else if (message instanceof ScanConfigure){
+			security = ((ScanConfigure)message).getSecurity();
 		}
 	}
 	
-	public boolean checkPerson(Person person) throws InterruptedException{
-		int check = (int) (Math.random() * 100);
-		wait(3000);
-		if(check <= 20){
-			return false;
-
-		}else{
-			return true;
-		}
-		
+	public boolean checkPerson() throws InterruptedException{
+		// Scanning a person takes 2 seconds 
+		Thread.sleep(CHECK_TIME);
+		return (r.nextInt(5) == 0);
 	}
-	
-	public void sendPersonToSecurity(ArrayList bodyList) throws InterruptedException{
-		security.tell(bodyList);
-	}
-	
 }

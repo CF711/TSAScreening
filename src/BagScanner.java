@@ -1,55 +1,48 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Random;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
-import static akka.actor.Actors.actorOf;
 
 /**
  * Stub
  * 
  * @author Chris
  * @author Carol
+ * @category Andy "The Guy" Lyne
  *
  */
 public class BagScanner extends UntypedActor {
 	
-	//ActorRef security;
-	Person person;
-	boolean bagCheck = false;
-	ArrayList<Object> bagList = new ArrayList<Object>();
-
-
+	private int CHECK_TIME = 2000;
+	private ActorRef security;
+	private Random r = new Random();
+	
 	public void onReceive(Object message){
-		if (message instanceof Configure){
-//add Andy's stuff
+		if (message instanceof Baggage){
+			BagScanResults results;
+			boolean didPass = false;
+			try{
+				didPass = checkBags((Baggage)message);
+			}catch( InterruptedException e){
+				System.err.println("Bag Inspection Interrupted: Automatic Fail");
+				didPass = false;
+			}finally{
+				results = new BagScanResults((Baggage)message, didPass);
+				security.tell(results);
+			}
 		}
-		if (message instanceof Person){
-			person = (Person)message;
-			bagCheck = checkBag(person);
-			bagList.add((Person)person);
-			bagList.add((Boolean)checkBag(person));
-			sendBagToSecurity(bagList);
+		else if (message instanceof ScanConfigure){
+			security = ((ScanConfigure)message).getSecurity();
 		}
-		
 	}
 	
-	public boolean checkBag(Person person) throws InterruptedException{
-		int check = (int) (Math.random() * 100);
-		wait(person.getNumberOfBags()*1000);
-
-		if(check <= 20){
-			return false;
-
-		}else{
-			return true;
+	public boolean checkBags(Baggage bags) throws InterruptedException{
+		boolean didPass = true;
+		for( int i=0; i< bags.getNumBags(); i++){
+			Thread.sleep(CHECK_TIME);
+			if(r.nextInt(5) == 0)
+				didPass = false;
 		}
-		
+		return didPass;
 	}
-	
-	public void sendBagToSecurity(ArrayList bagArray) throws InterruptedException{
-		security.tell(bagList);
-		//get from configure
-	}
-
 }
