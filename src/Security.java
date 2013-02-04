@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import static akka.actor.Actors.actorOf;
@@ -14,11 +16,15 @@ import static akka.actor.Actors.actorOf;
  */
 public class Security extends UntypedActor {
 	
-	Person person;
+	int personId;
 	boolean passCheck;
+	Person person;
+	
+	HashMap<Integer, Boolean> awaiting= new HashMap<Integer, Boolean>();
 	
     List<Person> jail = new ArrayList<Person>();
-    HashMap<Person, Boolean> awaiting = new HashMap<Person, Boolean>();
+    List<Object> checkList = new ArrayList<Object>();
+    //HashMap<Integer, Boolean> securityCheck = new HashMap<Integer, Boolean>();
 	
     /*
      * This will need to be reworked as actors cannot receive messages
@@ -27,28 +33,37 @@ public class Security extends UntypedActor {
      * from BodyScanner) and the Person's bags (sent from BagScanner)
      */
 	public void onReceive(Object message) throws Exception{
-		if (message instanceof Boolean) {
-			passCheck = (Boolean)message2;
+		if (message instanceof Configure) {
+		//Andy
 		}
 		
-		if (message instanceof Person) {
-			person = (Person)message1;
-			if(awaiting.containsKey(person.getPersonId())) {
-				if (awaiting.get(person.getPersonId()) && passCheck) {
-					System.out.println("Person: " + person.getPersonId() + " has passed security.");
-				}
-				else {
-					sendToJail(person);
-				}
+		if (message instanceof ArrayList) {
+			checkList = (ArrayList)message;
+			passCheck = (boolean) checkList.get(1);
+			person = (Person) checkList.get(0);
+			personId = person.getPersonId();
+		}	
+			if (awaiting.containsKey(personId)){
+				check(awaiting.get(personId), passCheck);
+			}else{
+				awaiting.put(personId, passCheck);
+			}	
+
+	}
+	
+	public void check(boolean value1, boolean value2){
+			if(value1 && value2){
+				System.out.println("Person: " + personId + " has passed security.");
 			}
-			else {
-				awaiting.put(person, passCheck);
+			else{
+				sendToJail(person);
 			}
-		}
+			
+		
 	}
 	
 	public void sendToJail(Person person){
 		jail.add(person);
-		System.out.println("Person: " + person.getPersonId() + " has been sent to jail.");
+		System.out.println("Person: " + personId + " has been sent to jail.");
 	}
 }

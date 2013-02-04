@@ -14,51 +14,44 @@ import akka.actor.UntypedActor;
  * @CodeGuru Andrew Lyne
  * 
  */
-public class Queue extends AbstractActor {
+public class Queue extends UntypedActor {
 
-	//LinkedList<Person> queue = new LinkedList<Person>();
-	//boolean scannerClear = true;
+	LinkedList<Person> queue = new LinkedList<Person>();
+	boolean scannerClear = true;
 
-	final ActorRef queueBag; 
-	final ActorRef queueBody; 
-	
-	public Queue(){
-		queueBag = actorOf(BagScanner.class).start();
-		queueBody = actorOf(BodyScanner.class).start();
-		security = actorOf(Security.class).start();
-		ScanConfigure conf = new ScanConfigure( security );
-		queueBag.tell(conf);
-		queueBody.tell(conf);
-	}
-	
-	
+	ActorRef queueBag = actorOf(BagScanner.class).start();
+	ActorRef queueBody = actorOf(BodyScanner.class).start();
+	ActorRef security = actorOf(Security.class).start();
+
 	public void onReceive(Object message) {
 		if (message instanceof Person) {
-			Person p = (Person)message;
-			sendToBodyScan(p);
-			sendToBagScan(p.getBaggage());
-		}
-		else if( message instanceof EndDay){
-			queueBag.tell((EndDay)message);
-			queueBody.tell((EndDay)message);
-			System.out.println("Queue shutting down" );
-		}else{
-			System.err.println("Queue recieved invalid message: " + 
-					message.toString());
+			if (!queue.contains((Person) message)) {
+				if (scannerClear && queue.isEmpty()) {
+					queue.add((Person) message);
+					
+					// Does this need to be executed as atomic operation?
+					sendToBagScan();
+					sendToBodyScan();
+					
+				} 
+				else {
+					queue.add((Person) message);
+				}
+			}
 		}
 	}
 
 	/**
 	 * Sends a person object to the bag scanner
 	 */
-	public void sendToBagScan(Baggage bags){
-		queueBag.tell(bags);
+	public void sendToBagScan(){
+		queueBag.tell(queue.getFirst(), security);
 	}
 	
 	/**
 	 * Sends a person object to the body scanner
 	 */
-	public void sendToBodyScan(Person per) {
-		queueBody.tell(per);
+	public void sendToBodyScan() {
+		queueBody.tell(queue.pop(), security);
 	}
 }
